@@ -12,12 +12,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        fetch-depth: 0  # Fetch all history for all branches and tags
+        fetch-depth: 0  # Necessary for complete history
 
     - name: Configure user information
       run: |
-        git config user.name "maxregnerklos"
-        git config user.email "plodmrasif@gmail.com"
+        git config user.name "GitHub Username"
+        git config user.email "your-email@example.com"
 
     - name: Add upstream repository
       run: git remote add upstream https://github.com/WOA-Project/WOA-Deployer.git
@@ -26,13 +26,15 @@ jobs:
       run: git fetch upstream
 
     - name: Checkout main branch
-      run: git checkout master  # or main, depending on your default branch name
+      run: git checkout master  # Adjust according to your branch name, e.g., main
 
-    - name: Rebase upstream changes
-      run: git rebase --continue upstream/master  # or upstream/main
+    - name: Merge upstream changes favoring our changes
+      run: |
+        # Automatically favoring our changes during conflicts
+        git merge upstream/master -X theirs
 
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: master  # or main, depending on your default branch name
+        branch: master  # Adjust according to your branch name, e.g., main
