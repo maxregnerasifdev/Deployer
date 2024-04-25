@@ -1,4 +1,4 @@
-name: Sync Upstream
+name: Sync Upstream and Zip Results
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
-  sync:
+  sync-and-zip:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -35,8 +35,11 @@ jobs:
         git merge upstream/master --allow-unrelated-histories -X theirs
       shell: /usr/bin/bash -e {0}
 
-    - name: Push changes
-      uses: ad-m/github-push-action@master
+    - name: Zip the repository contents
+      run: zip -r merged-results.zip .  # This zips the entire repo directory
+
+    - name: Upload merged results as an artifact
+      uses: actions/upload-artifact@v2
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: master  # Adjust according to your branch name, e.g., main
+        name: merged-results
+        path: merged-results.zip
