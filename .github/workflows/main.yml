@@ -29,7 +29,7 @@ jobs:
       run: git checkout master  # or main, depending on your default branch name
 
     - name: Rebase upstream changes
-      run: git rebase upstream/master  # or upstream/main
+      run: git rebase --continue upstream/master  # or upstream/main
 
     - name: Push changes
       uses: ad-m/github-push-action@master
