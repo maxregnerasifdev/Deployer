@@ -1,0 +1,38 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs at midnight every day
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Fetch all history for all branches and tags
+
+    - name: Configure user information
+      run: |
+        git config user.name "maxregnerklos"
+        git config user.email "plodmrasif@gmail.com"
+
+    - name: Add upstream repository
+      run: git remote add upstream https://github.com/WOA-Project/WOA-Deployer.git
+
+    - name: Fetch changes from upstream
+      run: git fetch upstream
+
+    - name: Checkout main branch
+      run: git checkout master  # or main, depending on your default branch name
+
+    - name: Rebase upstream changes
+      run: git rebase upstream/master  # or upstream/main
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: master  # or main, depending on your default branch name
